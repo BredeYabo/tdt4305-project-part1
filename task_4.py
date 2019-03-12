@@ -5,7 +5,7 @@ import unicodedata as uni
 
 sc = SparkContext()
 
-lines = sc.textFile("/home/slaysmajor/ntnu/bigdata/albums.csv")
+lines = sc.textFile("albums.csv")
 mapped = lines.map(lambda line: (line.split(",")))
 tuppled = mapped.map(lambda x: (int(x[1]),1)) # (album_id, count)
 

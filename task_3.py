@@ -1,10 +1,8 @@
 from pyspark import SparkConf, SparkContext
-import csv
-import unicodedata as uni
 
 sc = SparkContext()
 
-lines = sc.textFile("/home/slaysmajor/ntnu/bigdata/artists.csv")
+lines = sc.textFile("artists.csv")
 mapped = lines.map(lambda line: (line.split(",")))
 tuppled = mapped.map(lambda x: (x[5],1))
 

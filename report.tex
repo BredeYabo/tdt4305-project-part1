@@ -1,0 +1,77 @@
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks = true}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{caption}
+
+\begin{document}
+
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\center % Center everything on the page
+ 
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+\textsc{\LARGE NTNU}\\[1.5cm] % Name of your university/college
+\textsc{\Large TDT4225 Store, distribuerte datamengder}\\[0.5cm] % Major heading such as course name
+\textsc{\large Assignment \#4}\\[0.5cm] % Minor heading such as course title
+
+\HRule \\[0.4cm]
+{ \huge \bfseries Øving 4}\\[0.4cm] % Title of your document
+\HRule \\[1.5cm]
+ 
+
+\emph{Medvirkende:}\\
+Brede Yabo \textsc{Kristensen}\\ % Your name
+
+~
+
+\emph{} \\
+
+
+{\large \today}\\[2cm] % Date, change the \today to a set date if you want to be precise
+
+\includegraphics[width=55mm,scale=1.0]{logo_ntnu_bokm.png}\\[1cm] % Include a department/university logo - this will require the graphicx package
+ 
+%----------------------------------------------------------------------------------------
+\title{}
+\vfill % Fill the rest of the page with whitespace
+
+
+\end{titlepage}
+
+\section{RDD API Tasks}
+
+\subsection{Task 1}
+
+The files we are reading are rows with columns seperated by , .
+
+I first split each column using , as a deliminator. This is done by using the map() function as it applies a function to all of the rows. The result is yet another RDD. When splitting the rows we get an array for each row, we then want the fourth column as it is the genre column. We could of used flatmap(), but we want to an rdd that has the same number of rows.
+
+We then use the function distinct() to remove all duplicate from the rdd. Finally we count the number of rows using the count() function, which returns  number.
+
+
+\subsection{Task 2}
+
+We start the same way as last time, only now we get the fourth column from the artist.csv file (year). We also make sure that the rows are converted to integers as we will compare them later. We then reduce the rdd using the reduce() function. We want to return the oldest artist and do this by comparing all the rows.
+
+Finally we print the oldest artist birth date.
+
+\subsection{Task 3}
+
+
+\end{document}
+
+

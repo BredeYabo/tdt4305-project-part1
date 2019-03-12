@@ -4,7 +4,7 @@ import unicodedata as uni
 
 sc = SparkContext()
 
-lines = sc.textFile("/home/slaysmajor/ntnu/bigdata/albums.csv")
+lines = sc.textFile("albums.csv")
 mapped = lines.map(lambda line: (line.split(",")))
 # album id, (rolling, mtv, maniac)
 tuppled = mapped.map(lambda x: (x[0],(float(x[7]),float(x[8]),float(x[9]))))
@@ -20,7 +20,9 @@ album_by_rating = album_by_rating.map(lambda (x,y): (y,x))
 
 # albums = album_by_rating.collect()
 # Get top 10 rdd
-top_10_rdd = sc.parallelize(album_by_rating.take(10)) # (album_id, avg(rating))
+# top_10_rdd = sc.parallelize(album_by_rating.take(10)) # (album_id, avg(rating))
+top_10_rdd = album_by_rating.zipWithIndex().filter(lambda x: x[1] < 10).keys()
+# Returns an RDD, more efficient than parallelizing. The downside is that it shuffles the result, it's not ordered anymore. The task doesn't specify a order
 
 # TASK 7
 # Finding corrosponding top artists
@@ -28,7 +30,7 @@ album_artist = mapped.map(lambda x: (x[1],x[0])) # (artist_id, album_id)
 # top_10_artists_id = top_10_rdd.join(tuppled2)
 # print(top_10_artists_id.collect())
 # Get artists id and country
-lines_artists = sc.textFile("/home/slaysmajor/ntnu/bigdata/artists.csv")
+lines_artists = sc.textFile("artists.csv")
 mapped_artists = lines_artists.map(lambda line: (line.split(",")))
 tuppled_artists = mapped_artists.map(lambda x: (x[0],x[5])) # (Artist_id, country)
 

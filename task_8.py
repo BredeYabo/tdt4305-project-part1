@@ -4,43 +4,41 @@ import unicodedata as uni
 
 sc = SparkContext()
 
-lines = sc.textFile("/home/slaysmajor/ntnu/bigdata/albums.csv")
+lines = sc.textFile("albums.csv")
 mapped = lines.map(lambda line: (line.split(",")))
 # album id, mtv
 tuppled = mapped.map(lambda x: (x[0],float(x[8])))
 
-# Getting album by average rating.
-# Sorting by album
-album_by_rating = album_by_rating.sortByKey()
-# Sorting by average rating
+# Getting mtv rating == 5.0
+album_by_rating = tuppled.map(lambda (x,y): (y,x))
+album_by_rating = album_by_rating.filter(lambda (x,y): x == 5.0)
 album_by_rating = album_by_rating.map(lambda (x,y): (y,x))
-album_by_rating = album_by_rating.filter(lambda (x,y): x == 5.0) # (album_id, count)
-album_by_rating = album_by_rating.sortByKey(False)
-album_by_rating = album_by_rating.map(lambda (x,y): (y,x))
-print(album_rating.take(10))
 
-# albums = album_by_rating.collect()
-# Get top 10 rdd
-top_10_rdd = sc.parallelize(album_by_rating.take(10)) # (album_id, avg(rating))
+# All albums with mtv score 5
+album_mtv5 =  album_by_rating # (album_id, mtv_rating)
 
 
 # Finding corrosponding top artists
 album_artist = mapped.map(lambda x: (x[1],x[0])) # (artist_id, album_id)
-# top_10_artists_id = top_10_rdd.join(tuppled2)
-# print(top_10_artists_id.collect())
-# Get artists id and country
-lines_artists = sc.textFile("/home/slaysmajor/ntnu/bigdata/artists.csv")
+
+# Get artists name
+lines_artists = sc.textFile("artists.csv")
 mapped_artists = lines_artists.map(lambda line: (line.split(",")))
-tuppled_artists = mapped_artists.map(lambda x: (x[0],x[5])) # (Artist_id, country)
+tuppled_artists = mapped_artists.map(lambda x: (x[0],x[1])) # (Artist_id, country)
 
-artist_country = album_artist.join(tuppled_artists) # (Artist_id, (country,Album_id))
-album_country = artist_country.map(lambda (x,(y1,y2)): (y1,y2)) # (album_id,country)
-top_10_album_rating_country = top_10_rdd.join(album_country)
+artist_name = album_artist.join(tuppled_artists) # (Artist_id, (country,Album_id))
+artist_name_album = artist_name.map(lambda (x,(y1,y2)): (y1,y2)) # (album_id,country)
+top_mtv_artists = album_mtv5.join(artist_name_album)
 
-top_10_album_rating_country = top_10_album_rating_country.map(lambda x: "%s\t%s\t%s" %(x[0],x[1][0],x[1][1]))
-top_10_album_rating_country.coalesce(1, shuffle = True).saveAsTextFile("result_7")
+top_mtv_artists = top_mtv_artists.map(lambda  (x, (y1,y2)): (y2,y1))
+top_mtv_artists = top_mtv_artists.distinct()
+top_mtv_artists = top_mtv_artists.sortByKey(True)
+
+
+top_mtv_artists = top_mtv_artists.map(lambda x: "%s\t%s" %(x[0],x[1]))
+top_mtv_artists.coalesce(1, shuffle = True).saveAsTextFile("result_8")
 
 
 
-# top_10_rdd = top_10_rdd.map(lambda x: "%s\t%s" %(x[0],x[1]))
-# top_10_rdd.coalesce(1, shuffle = True).saveAsTextFile("result_6")
+# album_mtv5 = album_mtv5.map(lambda x: "%s\t%s" %(x[0],x[1]))
+# album_mtv5.coalesce(1, shuffle = True).saveAsTextFile("result_6")
