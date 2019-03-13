@@ -54,6 +54,8 @@ Brede Yabo \textsc{Kristensen}\\ % Your name
 
 \section{RDD API Tasks}
 
+The primary focus of using the spark functions is to only transform the RDD before the final execution, which is saving it a file. This reduces computational requirement for the program. This means that we should avoid using parrallelize() or take() in the middle of the program at all cost.
+
 \subsection{Task 1}
 
 The files we are reading are rows with columns seperated by , .
@@ -73,15 +75,23 @@ Finally we print the oldest artist birth date.
 
 Like before, we split the lines but now as a tupple with the integer 1, used for counting later. We then use reduceByKey() which executes the function for each rows that have the same key, in our case, we count each time and add it to the counter in the tupple. This leaves us with the number of artist for each country.
 
-The task specifies that we sort the total number of artist for each country descending and artist alphabetically for countries with the same number of artists. This is done by first sorting alphabetically and then sorting for count.
+The task specifies that we sort the total number of artist for each country descending and artist alphabetically for countries with the same number of artists. One thing to note when using hadoop/spark is that the data is split into different partitions. So we can't call sortByKey two times for each key and value, because this function shuffles the last order, therefor not preserving the previous order. We begin by sorting by countries as normal, then we map the tupples into ((count,country),country) so that we keep the country ordering when inserting it back to the normal tupple (country, count). We also specify in this sort that we want to sort only count and nothing else, or else it will also sort countries alphabetically Descending, which is not what we want.
 
-When sorting the keys, we just flip the tupple and sortByKey (with false for descending sort) and the flip back. The result is outputted to result_3 directory
+The result is finally outputted to result_3 with coalesce, shuffle turned off to preserve the order. Read more about why coalesce is chosen in it's subsection.
+
+\subsection{Task 4}
+
+We begin by mapping out artist_id column and keeping a number 1 in the tupple from the album file. The reason for doing this is because we know that there are duplicates in artist_id because some artist have several albums. We then reduceByKey() which executes the function inside whenever we have the same artist_id. The function basically counts each time for each same artist_id and adds it to the last element in the tupple. 
+
+We then sort artist_id descending and do the same for count only now we use the same technique as we did with task 3 to preserve the previous sort order.
 
 \subsection{Task 4}
 
 
 
 \subsection{Coalesce vs repartition}
+
+Coalesce is being used with shuffle being false. This is because it preserves the ordering when sorting the data into one partition. Repartition shuffles the data when it combines it into one partition. Repartition calls Coalesce with shuffle as true, which will not preserve the order.
 
 \end{document}
 

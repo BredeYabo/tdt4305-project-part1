@@ -11,9 +11,9 @@ artist_by_country = artist_mapped.reduceByKey(lambda x, y: x + y)
 # Sorting by country # Alphabetically
 artist_by_country = artist_by_country.sortByKey(True)
 # Sorting by count
-artist_by_country = artist_by_country.map(lambda (x,y): (y,x))
-artist_by_country = artist_by_country.sortByKey(False)
-artist_by_country = artist_by_country.map(lambda (x,y): (y,x))
+artist_by_country = artist_by_country.map(lambda (x,y): ((y,x),x))
+artist_by_country = artist_by_country.sortBy(lambda ((x,y),y1): x,ascending=False)
+artist_by_country = artist_by_country.map(lambda ((x,y),y1): (y,x))
 
-artist_by_country.map(lambda x: "%s\t%s" %(x[0],x[1])).coalesce(1, shuffle = True).saveAsTextFile("result_3")
+artist_by_country.map(lambda x: "%s\t%s" %(x[0],x[1])).coalesce(1, shuffle = False).saveAsTextFile("result_3")
 
