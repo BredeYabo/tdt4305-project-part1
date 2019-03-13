@@ -71,6 +71,17 @@ Finally we print the oldest artist birth date.
 
 \subsection{Task 3}
 
+Like before, we split the lines but now as a tupple with the integer 1, used for counting later. We then use reduceByKey() which executes the function for each rows that have the same key, in our case, we count each time and add it to the counter in the tupple. This leaves us with the number of artist for each country.
+
+The task specifies that we sort the total number of artist for each country descending and artist alphabetically for countries with the same number of artists. This is done by first sorting alphabetically and then sorting for count.
+
+When sorting the keys, we just flip the tupple and sortByKey (with false for descending sort) and the flip back. The result is outputted to result_3 directory
+
+\subsection{Task 4}
+
+
+
+\subsection{Coalesce vs repartition}
 
 \end{document}
 

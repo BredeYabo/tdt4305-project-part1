@@ -1,13 +1,13 @@
 from pyspark import SparkConf, SparkContext
+# Find number of artist coming from each country and sort them descending.
 
 sc = SparkContext()
 
 lines = sc.textFile("artists.csv")
-mapped = lines.map(lambda line: (line.split(",")))
-tuppled = mapped.map(lambda x: (x[5],1))
+artist_mapped = lines.map(lambda line: (line.split(",")[5], 1)) # (Country, 1)
 
-# Getting artist count by contry
-artist_by_country = tuppled.reduceByKey(lambda x, y: x + y)
+# Getting artist count by country
+artist_by_country = artist_mapped.reduceByKey(lambda x, y: x + y)
 # Sorting by country # Alphabetically
 artist_by_country = artist_by_country.sortByKey(True)
 # Sorting by count
