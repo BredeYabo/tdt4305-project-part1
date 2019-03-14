@@ -3,9 +3,8 @@ from pyspark import SparkConf, SparkContext
 
 sc = SparkContext()
 
-lines = sc.textFile("artists.csv")
 # (Country, count)
-artist_by_country  = lines.map(lambda line: (line.split(",")[5], 1)).reduceByKey(lambda x, y: x + y)
+artist_by_country = sc.textFile("artists.csv").map(lambda line: (line.split(",")[5], 1)).reduceByKey(lambda x, y: x + y)
 
 # Sorting by country # Alphabetically
 artist_by_country = artist_by_country.sortByKey(True)

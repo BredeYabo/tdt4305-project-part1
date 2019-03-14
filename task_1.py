@@ -2,11 +2,7 @@
 from pyspark import SparkConf, SparkContext
 
 sc = SparkContext()
+distinct_genres = sc.textFile("albums.csv").map(lambda line: (line.split(","))[3]).distinct()
 
-lines = sc.textFile("albums.csv")
-mapped = lines.map(lambda line: (line.split(","))[3])
-
-distinct = filtered.distinct()
-
-print(distinct.count())
+print(distinct_genres.count())
 

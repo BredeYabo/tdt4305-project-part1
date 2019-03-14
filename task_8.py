@@ -1,6 +1,4 @@
 from pyspark import SparkConf, SparkContext
-import csv
-import unicodedata as uni
 
 sc = SparkContext()
 
